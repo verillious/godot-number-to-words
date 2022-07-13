@@ -48,13 +48,13 @@ print(NumberToWords.to_ordinal(1003))
 
 ### `NumberToWords.to_ordinal_number(number: int) -> String`
 ```python
-print(NumberToWords.to_ordinal(1))
+print(NumberToWords.to_ordinal_number(1))
 > "1st"
 
-print(NumberToWords.to_ordinal(22))
+print(NumberToWords.to_ordinal_number(22))
 > "22nd"
 
-print(NumberToWords.to_ordinal(1003))
+print(NumberToWords.to_ordinal_number(1003))
 > "1003rd"
 ```
 
