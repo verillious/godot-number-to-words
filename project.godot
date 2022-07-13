@@ -21,9 +21,8 @@ _global_script_class_icons={
 [application]
 
 config/name="godot-number-to-words"
-config/description="datetime utils for Godot"
-run/main_scene="res://example/datetime_example.tscn"
-config/icon="res://resources/icon.png"
+config/description="convert numbers to words in gdscript"
+config/icon="res://addons/number-to-words/numeric.png"
 config/version="0.1.0"
 
 [debug]

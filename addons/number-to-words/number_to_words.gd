@@ -36,7 +36,7 @@ const TENS = {
 
 const ILLIONS = {
 	1: "thousand", 2: "million", 3: "billion", 4: "trillion", 5: "quadrillion", 6: "quintillion"
-}  # hit the godot int limit here - sorry
+}  # godot ints cannot be larger than quintillions
 
 const ORDS = {
 	"one": "first",
@@ -54,28 +54,31 @@ const ORDS = {
 }
 
 
-# Convert an integer in to its word representation.
-static func to_words(i) -> String:
-	if not i:
+# Convert a "number" object to its word equivalent
+static func to_words(number) -> String:
+	if not number:
 		return "zero"
 
-	if i is int:
-		if i < 0:
-			return _join(["minus", to_cardinal(-i)])
-		return to_cardinal(i)
-	if i is float:
-		if i < 0:
-			return _join(["minus", _convert_float(-i)])
-		return _convert_float(i)
-	if i is String:
-		if i.is_valid_float():
-			return to_words(float(i))
-		return to_words(int(i))
-	return str(i)
+	if number is int:
+		if number < 0:
+			return _join(["minus", to_cardinal(-number)])
+		return to_cardinal(number)
+
+	if number is float:
+		if sign(number) == -1:
+			return _join(["minus", _convert_float(-number)])
+		return _convert_float(number)
+
+	if number is String:
+		if number.is_valid_float():
+			return to_words(float(number))
+		return to_words(int(number))
+
+	return str(number)
 
 
-static func to_ordinal(value: int):
-	var outwords = to_words(value).split(" ")
+static func to_ordinal(number: int) -> String:
+	var outwords = to_words(number).split(" ")
 	var lastword = outwords[-1]
 
 	if ORDS.has(lastword):
@@ -88,34 +91,45 @@ static func to_ordinal(value: int):
 	return outwords.join(" ")
 
 
-static func to_cardinal(i: int) -> String:
-	if i < 20:
-		return ONES[i]
-	if i < 100:
-		return _join([TENS[i / 10], ONES[i % 10]])
-	if i < 1000:
-		return _divide(i, 100, "hundred")
+static func to_ordinal_number(number: int) -> String:
+	var suffix = ""
+	var number_positive = int(abs(number))
+	var last_two_digits = number_positive % 100
+	if 4 <= last_two_digits and last_two_digits <= 20:
+		suffix = "th"
+	else:
+		suffix = {1: "st", 2: "nd", 3: "rd"}.get(number_positive % 10, "th")
+	return str(number) + suffix
+
+
+static func to_cardinal(number: int) -> String:
+	if number < 20:
+		return ONES[number]
+	if number < 100:
+		return _join([TENS[number / 10], ONES[number % 10]])
+	if number < 1000:
+		return _divide(number, 100, "hundred")
 	var illions_name := ""
 	var illions_number := 0
-	for number in ILLIONS.keys():
-		illions_number = number
+	for key in ILLIONS.keys():
+		illions_number = key
 		illions_name = ILLIONS[illions_number]
-		if i < pow(1000, illions_number + 1):
+		if number < pow(1000, illions_number + 1):
 			break
-	return _divide(i, pow(1000, illions_number), illions_name)
+	return _divide(number, pow(1000, illions_number), illions_name)
 
 
-static func to_year(i: int) -> String:
-	var string_number = str(i)
+static func to_year(number: int) -> String:
+	var string_number = str(number)
 	var decade = int(string_number.substr(0, string_number.length() - 2))
 	var year = int(string_number.right(string_number.length() - 2))
 
-	if (i < 1000 and year == 0) or i < 100:
-		return to_words(i)
+	if (number < 1000 and year == 0) or number < 100:
+		return to_words(number)
 
 	if year < 10:
 		if not decade % 10:
-			return to_words(i)
+			return to_words(number)
 		if year == 0:
 			return _join([to_words(decade), "hundred"])
 		return _join([to_words(decade), to_cardinal_numbers("%02d" % year, "oh")])
@@ -123,24 +137,36 @@ static func to_year(i: int) -> String:
 	return _join([to_words(decade), to_words(year)])
 
 
-static func to_cardinal_numbers(i: String, zero_replace := "zero") -> String:
+static func to_cardinal_numbers(number, zero_replace := "zero") -> String:
 	var to_join := []
-	for c in i:
-		var word = to_cardinal(int(c))
+	var string_number = str(number)
+
+	if string_number[0] == "-":
+		to_join.append("minus")
+		string_number = string_number.right(1)
+
+	for character in string_number:
+		if character == ".":
+			to_join.append("point")
+			continue
+		var word = to_cardinal(int(character))
 		if not word:
 			word = zero_replace
 		to_join.append(word)
+
 	return _join(to_join)
 
 
-static func _convert_float(i: float):
-	var segments = str(i).split(".")
+static func _convert_float(number: float) -> String:
+	if str(number) == "0":  # godot single-precision can lose accuracy and become 0 :(
+		return "zero"
+	var segments = str(number).split(".")
 	var to_join = [to_cardinal(int(segments[0])), "point"]
 	to_join.append(to_cardinal_numbers(segments[1]))
 	return _join(to_join)
 
 
-static func _divide(dividend: int, divisor: int, magnitude: String):
+static func _divide(dividend: int, divisor: int, magnitude: String) -> String:
 	if not dividend % divisor:
 		return _join([to_cardinal(dividend / divisor), magnitude, to_cardinal(dividend % divisor)])
 	if dividend % divisor < 100:

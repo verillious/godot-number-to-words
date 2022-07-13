@@ -1,16 +1,6 @@
 extends "res://addons/gut/test.gd"
 
 
-func test_ordinal():
-	assert_eq(NumberToWords.to_ordinal(0), "zeroth")
-	assert_eq(NumberToWords.to_ordinal(1), "first")
-	assert_eq(NumberToWords.to_ordinal(13), "thirteenth")
-	assert_eq(NumberToWords.to_ordinal(22), "twenty second")
-	assert_eq(NumberToWords.to_ordinal(12), "twelfth")
-	assert_eq(NumberToWords.to_ordinal(130), "one hundred and thirtieth")
-	assert_eq(NumberToWords.to_ordinal(1003), "one thousand and third")
-
-
 func test_cardinal():
 	assert_eq(NumberToWords.to_words(0), "zero")
 	assert_eq(NumberToWords.to_words(1), "one")
@@ -63,6 +53,34 @@ func test_cardinal_for_float_number():
 	assert_eq(NumberToWords.to_words(12.51), "twelve point five one")
 	assert_eq(NumberToWords.to_words(12.53), "twelve point five three")
 	assert_eq(NumberToWords.to_words(12.59), "twelve point five nine")
+	assert_eq(NumberToWords.to_words(-12.59), "minus twelve point five nine")
+
+
+func test_cardinal_numbers():
+	assert_eq(NumberToWords.to_cardinal_numbers(12), "one two")
+	assert_eq(NumberToWords.to_cardinal_numbers(102.78), "one zero two point seven eight")
+	assert_eq(NumberToWords.to_cardinal_numbers(-12.78), "minus one two point seven eight")
+
+
+func test_ordinal():
+	assert_eq(NumberToWords.to_ordinal(0), "zeroth")
+	assert_eq(NumberToWords.to_ordinal(1), "first")
+	assert_eq(NumberToWords.to_ordinal(13), "thirteenth")
+	assert_eq(NumberToWords.to_ordinal(22), "twenty second")
+	assert_eq(NumberToWords.to_ordinal(12), "twelfth")
+	assert_eq(NumberToWords.to_ordinal(130), "one hundred and thirtieth")
+	assert_eq(NumberToWords.to_ordinal(1003), "one thousand and third")
+
+
+func test_ordinal_number():
+	assert_eq(NumberToWords.to_ordinal_number(0), "0th")
+	assert_eq(NumberToWords.to_ordinal_number(1), "1st")
+	assert_eq(NumberToWords.to_ordinal_number(13), "13th")
+	assert_eq(NumberToWords.to_ordinal_number(22), "22nd")
+	assert_eq(NumberToWords.to_ordinal_number(12), "12th")
+	assert_eq(NumberToWords.to_ordinal_number(130), "130th")
+	assert_eq(NumberToWords.to_ordinal_number(1003), "1003rd")
+	assert_eq(NumberToWords.to_ordinal_number(-1003), "-1003rd")
 
 
 func test_to_year():
@@ -81,3 +99,17 @@ func test_to_year():
 	assert_eq(NumberToWords.to_year(600), "six hundred")
 	assert_eq(NumberToWords.to_year(50), "fifty")
 	assert_eq(NumberToWords.to_year(0), "zero")
+
+
+func test_weird_numbers():
+	assert_eq(NumberToWords.to_words(89_000), "eighty nine thousand")
+	assert_eq(NumberToWords.to_words(0x8f51), "thirty six thousand, six hundred and eighty nine")
+	assert_eq(NumberToWords.to_words(0b101010), "forty two")
+	assert_eq(NumberToWords.to_words(58.1e-2), "point five eight one")
+	assert_eq(NumberToWords.to_words(4e-2), "point zero four")
+	assert_eq(
+		NumberToWords.to_words(0.0000009),
+		"point zero zero zero zero zero one",
+		"godot floats are single-precision"
+	)
+	assert_eq(NumberToWords.to_words(0.00000009), "zero", "godot floats are single-precision")
