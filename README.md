@@ -79,8 +79,7 @@ print(NumberToWords.to_year(1901))
 > "nineteen oh one"
 ```
 
-🙏 Credits
--------
+## 🙏 Credits
 
 🍪 This project was created with [cookiecutter](https://github.com/audreyr/cookiecutter) and the [verillious/cookiecutter-godot](https://github.com/verillious/cookiecutter-godot) project template.
 
