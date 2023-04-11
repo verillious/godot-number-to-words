@@ -88,7 +88,7 @@ static func to_ordinal(number: int) -> String:
 			lastword = lastword.substr(0, lastword.length() - 1) + "ie"
 		lastword += "th"
 	outwords[-1] = lastword
-	return outwords.join(" ")
+	return " ".join(outwords)
 
 
 static func to_ordinal_number(number: int) -> String:
@@ -143,14 +143,14 @@ static func to_cardinal_numbers(number, zero_replace := "zero") -> String:
 
 	if string_number[0] == "-":
 		to_join.append("minus")
-		string_number = string_number.right(1)
+		string_number = string_number.substr(1)
 
 	for character in string_number:
 		if character == ".":
 			to_join.append("point")
 			continue
 		var word = to_cardinal(int(character))
-		if not word:
+		if word.is_empty():
 			word = zero_replace
 		to_join.append(word)
 
@@ -178,9 +178,9 @@ static func _divide(dividend: int, divisor: int, magnitude: String) -> String:
 	)
 
 
-static func _join(args: PoolStringArray) -> String:
-	var to_join := PoolStringArray([])
+static func _join(args: PackedStringArray) -> String:
+	var to_join := PackedStringArray([])
 	for arg in args:
 		if arg:
 			to_join.append(arg)
-	return to_join.join(" ")
+	return " ".join(to_join)

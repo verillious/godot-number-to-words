@@ -1,6 +1,7 @@
 
 # Godot-specific ignores
 .import/
+.godot/
 *.import
 addons/*/*.ini
 *.log

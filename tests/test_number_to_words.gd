@@ -109,7 +109,11 @@ func test_weird_numbers():
 	assert_eq(NumberToWords.to_words(4e-2), "point zero four")
 	assert_eq(
 		NumberToWords.to_words(0.0000009),
-		"point zero zero zero zero zero one",
-		"godot floats are single-precision"
+		"point zero zero zero zero zero zero nine",
+		"godot 4 floats are not single-precision"
 	)
-	assert_eq(NumberToWords.to_words(0.00000009), "zero", "godot floats are single-precision")
+	assert_eq(
+		NumberToWords.to_words(0.00000009),
+		"point zero zero zero zero zero zero zero nine",
+		"godot 4 floats are not single-precision"
+	)
